@@ -1,5 +1,5 @@
 This github repo contains the code used for the simulation study of the cheap subsampling confidence interval.
-To run the simulation study, one needs to use **R** with the ~targets~ package and ~tar_make~.
+To run the simulation study, one needs to use *R* with the ~targets~ package and run ~tar_make()~.
 In addition, one needs the ~rtmle~ and ~CheapSubsampling~ packages which, at the time of writing, are not on CRAN. The necessary packages can be installed as follows:
 #+BEGIN_SRC R
 install.packages(c("targets","data.table", "ggplot2", "tarchetypes", "crew", "crew.cluster","devtools", "dplyr", "tidyr", "tibble", "gt", "ggpubr"))
