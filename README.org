@@ -6,3 +6,132 @@ install.packages(c("targets","data.table", "ggplot2", "tarchetypes", "crew", "cr
 devtools::install_github("jsohlendorff/CheapSubsampling")
 devtools::install_github("tagteam/rtmle")
 #+END_SRC
+
+An example run for the simulation study can be run by running the following code in R:
+
+#+BEGIN_SRC R :results output org :exports none
+  # Load the necessary packages
+  library(data.table)
+  library(CheapSubsampling)
+  library(rtmle)
+
+  # Arguments
+  time_horizon <- 2
+  eta <- 0.632
+  sample_size <- 1000
+
+  # Load functions from simulation study
+  source("functions/rtmle_functions.R")
+  source("functions/simulation_functions.R")
+
+  # Generate some data
+  simulated_data <- simulate_data(n = sample_size, time_horizon = time_horizon)
+
+  # RTMLE initialization
+  x <- rtmle_init(
+    intervals = time_horizon,
+    name_id = "pnr",
+    name_outcome = "Y",
+    name_competing = NULL,
+    name_censoring = "C",
+    censored_levels = c(1, 0),
+    censored_label = 0
+  )
+  # Add data
+  add_baseline_data(x) <- simulated_data$baseline_data
+  x$data$outcome_data <- simulated_data$outcome
+  x$data$timevar_data <- simulated_data$timevarying_covariates
+  x$data$timevar_data <- x$data$timevar_data[simulated_data$regimen, on = "pnr"]
+  # Specify the treatment protocol
+  protocol(x) <- list(
+    name = "always_A",
+    treatment_variables = "A",
+    intervention = 1
+  )
+  prepare_data(x) <- list()
+  # Specify the target parameter
+  target(x) <- list(
+    name = "Outcome_risk",
+    strategy = "additive",
+    estimator = "tmle",
+    protocols = "always_A",
+    markov = NULL
+  )
+  rtmle_arguments <- list(refit = TRUE, learner = "learn_glm", time_horizon = time_horizon, selector = "lambda.min")
+
+  set.seed(123)
+  cheap_bootstrap_rtmle(
+    x = x,
+    cheap_bootstrap_arguments = list(
+      b = 25,
+      size = round(eta * sample_size),
+      parallelize = FALSE,
+      cores = 1,
+      type = "subsampling"
+    ),
+    rtmle_arguments = rtmle_arguments,
+    id_name = "pnr"
+  )
+#+END_SRC
+
+#+RESULTS:
+#+begin_src org
+Cheap subsampling results for subsample size m = 632 and 25 bootstrap samples
+Key: <Target, Protocol, Time_horizon, Estimator>
+          Target Protocol Time_horizon Estimator  estimate cheap_lower
+          <char>   <char>       <fctr>    <char>     <num>       <num>
+ 1: Outcome_risk always_A            2      tmle 0.1066421 -0.22973369
+ 2: Outcome_risk always_A            2      tmle 0.1066421  0.02265263
+ 3: Outcome_risk always_A            2      tmle 0.1066421  0.04404270
+ 4: Outcome_risk always_A            2      tmle 0.1066421  0.05809444
+ 5: Outcome_risk always_A            2      tmle 0.1066421  0.06311126
+ 6: Outcome_risk always_A            2      tmle 0.1066421  0.06878690
+ 7: Outcome_risk always_A            2      tmle 0.1066421  0.07257430
+ 8: Outcome_risk always_A            2      tmle 0.1066421  0.07553399
+ 9: Outcome_risk always_A            2      tmle 0.1066421  0.07780793
+10: Outcome_risk always_A            2      tmle 0.1066421  0.07965586
+11: Outcome_risk always_A            2      tmle 0.1066421  0.07749240
+12: Outcome_risk always_A            2      tmle 0.1066421  0.07898490
+13: Outcome_risk always_A            2      tmle 0.1066421  0.07422834
+14: Outcome_risk always_A            2      tmle 0.1066421  0.07528568
+15: Outcome_risk always_A            2      tmle 0.1066421  0.07625006
+16: Outcome_risk always_A            2      tmle 0.1066421  0.07685868
+17: Outcome_risk always_A            2      tmle 0.1066421  0.07679610
+18: Outcome_risk always_A            2      tmle 0.1066421  0.07760189
+19: Outcome_risk always_A            2      tmle 0.1066421  0.07808604
+20: Outcome_risk always_A            2      tmle 0.1066421  0.07857188
+21: Outcome_risk always_A            2      tmle 0.1066421  0.07836002
+22: Outcome_risk always_A            2      tmle 0.1066421  0.07908644
+23: Outcome_risk always_A            2      tmle 0.1066421  0.07868808
+24: Outcome_risk always_A            2      tmle 0.1066421  0.07928692
+25: Outcome_risk always_A            2      tmle 0.1066421  0.07962048
+          Target Protocol Time_horizon Estimator  estimate cheap_lower
+    cheap_upper     b
+          <num> <int>
+ 1:   0.4430180     1
+ 2:   0.1906317     2
+ 3:   0.1692416     3
+ 4:   0.1551898     4
+ 5:   0.1501730     5
+ 6:   0.1444974     6
+ 7:   0.1407100     7
+ 8:   0.1377503     8
+ 9:   0.1354764     9
+10:   0.1336284    10
+11:   0.1357919    11
+12:   0.1342994    12
+13:   0.1390559    13
+14:   0.1379986    14
+15:   0.1370342    15
+16:   0.1364256    16
+17:   0.1364882    17
+18:   0.1356824    18
+19:   0.1351982    19
+20:   0.1347124    20
+21:   0.1349243    21
+22:   0.1341978    22
+23:   0.1345962    23
+24:   0.1339974    24
+25:   0.1336638    25
+    cheap_upper     b
+#+end_src
