@@ -9,7 +9,7 @@ devtools::install_github("tagteam/rtmle")
 
 An example run for the simulation study can be run by running the following code in R:
 
-#+BEGIN_SRC R :results output org
+#+BEGIN_SRC R :results output org :exports both
   # Load the necessary packages
   library(data.table)
   library(CheapSubsampling)
@@ -57,7 +57,7 @@ An example run for the simulation study can be run by running the following code
     protocols = "always_A",
     markov = NULL
   )
-  rtmle_arguments <- list(refit = TRUE, learner = "learn_glm", time_horizon = time_horizon, selector = "lambda.min")
+  rtmle_arguments <- list(refit = TRUE, learner = "learn_glm", time_horizon = time_horizon)
 
   set.seed(123)
   cheap_bootstrap_rtmle(
@@ -78,60 +78,60 @@ An example run for the simulation study can be run by running the following code
 #+begin_src org
 Cheap subsampling results for subsample size m = 632 and 25 bootstrap samples
 Key: <Target, Protocol, Time_horizon, Estimator>
-          Target Protocol Time_horizon Estimator estimate cheap_lower
-          <char>   <char>       <fctr>    <char>    <num>       <num>
- 1: Outcome_risk always_A            2      tmle 0.104669  0.05064616
- 2: Outcome_risk always_A            2      tmle 0.104669  0.08513428
- 3: Outcome_risk always_A            2      tmle 0.104669  0.09285239
- 4: Outcome_risk always_A            2      tmle 0.104669  0.08794584
- 5: Outcome_risk always_A            2      tmle 0.104669  0.07869311
- 6: Outcome_risk always_A            2      tmle 0.104669  0.08189526
- 7: Outcome_risk always_A            2      tmle 0.104669  0.08257767
- 8: Outcome_risk always_A            2      tmle 0.104669  0.08103089
- 9: Outcome_risk always_A            2      tmle 0.104669  0.08249732
-10: Outcome_risk always_A            2      tmle 0.104669  0.08128813
-11: Outcome_risk always_A            2      tmle 0.104669  0.08263890
-12: Outcome_risk always_A            2      tmle 0.104669  0.07660070
-13: Outcome_risk always_A            2      tmle 0.104669  0.07323761
-14: Outcome_risk always_A            2      tmle 0.104669  0.07435628
-15: Outcome_risk always_A            2      tmle 0.104669  0.07486224
-16: Outcome_risk always_A            2      tmle 0.104669  0.07590451
-17: Outcome_risk always_A            2      tmle 0.104669  0.07455446
-18: Outcome_risk always_A            2      tmle 0.104669  0.07515705
-19: Outcome_risk always_A            2      tmle 0.104669  0.07514378
-20: Outcome_risk always_A            2      tmle 0.104669  0.07515576
-21: Outcome_risk always_A            2      tmle 0.104669  0.07490547
-22: Outcome_risk always_A            2      tmle 0.104669  0.07549025
-23: Outcome_risk always_A            2      tmle 0.104669  0.07598185
-24: Outcome_risk always_A            2      tmle 0.104669  0.07505530
-25: Outcome_risk always_A            2      tmle 0.104669  0.07551222
-          Target Protocol Time_horizon Estimator estimate cheap_lower
+          Target Protocol Time_horizon Estimator  estimate cheap_lower
+          <char>   <char>       <fctr>    <char>     <num>       <num>
+ 1: Outcome_risk always_A            2      tmle 0.1199594  0.04510490
+ 2: Outcome_risk always_A            2      tmle 0.1199594  0.07321657
+ 3: Outcome_risk always_A            2      tmle 0.1199594  0.07168511
+ 4: Outcome_risk always_A            2      tmle 0.1199594  0.07851400
+ 5: Outcome_risk always_A            2      tmle 0.1199594  0.08537849
+ 6: Outcome_risk always_A            2      tmle 0.1199594  0.08912034
+ 7: Outcome_risk always_A            2      tmle 0.1199594  0.08887440
+ 8: Outcome_risk always_A            2      tmle 0.1199594  0.08418118
+ 9: Outcome_risk always_A            2      tmle 0.1199594  0.08394048
+10: Outcome_risk always_A            2      tmle 0.1199594  0.08489046
+11: Outcome_risk always_A            2      tmle 0.1199594  0.07995597
+12: Outcome_risk always_A            2      tmle 0.1199594  0.08102777
+13: Outcome_risk always_A            2      tmle 0.1199594  0.07951754
+14: Outcome_risk always_A            2      tmle 0.1199594  0.08022880
+15: Outcome_risk always_A            2      tmle 0.1199594  0.08125742
+16: Outcome_risk always_A            2      tmle 0.1199594  0.08216463
+17: Outcome_risk always_A            2      tmle 0.1199594  0.08313226
+18: Outcome_risk always_A            2      tmle 0.1199594  0.08172181
+19: Outcome_risk always_A            2      tmle 0.1199594  0.08152945
+20: Outcome_risk always_A            2      tmle 0.1199594  0.08255710
+21: Outcome_risk always_A            2      tmle 0.1199594  0.08285387
+22: Outcome_risk always_A            2      tmle 0.1199594  0.08065354
+23: Outcome_risk always_A            2      tmle 0.1199594  0.08133186
+24: Outcome_risk always_A            2      tmle 0.1199594  0.08223024
+25: Outcome_risk always_A            2      tmle 0.1199594  0.08295302
+          Target Protocol Time_horizon Estimator  estimate cheap_lower
     cheap_upper     b
           <num> <int>
- 1:   0.1586918     1
- 2:   0.1242037     2
- 3:   0.1164856     3
- 4:   0.1213921     4
- 5:   0.1306449     5
- 6:   0.1274427     6
- 7:   0.1267603     7
- 8:   0.1283071     8
- 9:   0.1268407     9
-10:   0.1280498    10
-11:   0.1266991    11
-12:   0.1327373    12
-13:   0.1361004    13
-14:   0.1349817    14
-15:   0.1344757    15
-16:   0.1334335    16
-17:   0.1347835    17
-18:   0.1341809    18
-19:   0.1341942    19
-20:   0.1341822    20
-21:   0.1344325    21
-22:   0.1338477    22
-23:   0.1333561    23
-24:   0.1342827    24
-25:   0.1338258    25
+ 1:   0.1948140     1
+ 2:   0.1667023     2
+ 3:   0.1682338     3
+ 4:   0.1614049     4
+ 5:   0.1545404     5
+ 6:   0.1507985     6
+ 7:   0.1510445     7
+ 8:   0.1557377     8
+ 9:   0.1559784     9
+10:   0.1550284    10
+11:   0.1599629    11
+12:   0.1588911    12
+13:   0.1604013    13
+14:   0.1596901    14
+15:   0.1586614    15
+16:   0.1577542    16
+17:   0.1567866    17
+18:   0.1581971    18
+19:   0.1583894    19
+20:   0.1573618    20
+21:   0.1570650    21
+22:   0.1592653    22
+23:   0.1585870    23
+24:   0.1576886    24
+25:   0.1569658    25
     cheap_upper     b
 #+end_src
