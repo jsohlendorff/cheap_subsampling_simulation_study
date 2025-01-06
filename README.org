@@ -9,7 +9,7 @@ devtools::install_github("tagteam/rtmle")
 
 An example run for the simulation study can be run by running the following code in R:
 
-#+BEGIN_SRC R :results output org :exports none
+#+BEGIN_SRC R :results output org
   # Load the necessary packages
   library(data.table)
   library(CheapSubsampling)
@@ -78,60 +78,60 @@ An example run for the simulation study can be run by running the following code
 #+begin_src org
 Cheap subsampling results for subsample size m = 632 and 25 bootstrap samples
 Key: <Target, Protocol, Time_horizon, Estimator>
-          Target Protocol Time_horizon Estimator  estimate cheap_lower
-          <char>   <char>       <fctr>    <char>     <num>       <num>
- 1: Outcome_risk always_A            2      tmle 0.1066421 -0.22973369
- 2: Outcome_risk always_A            2      tmle 0.1066421  0.02265263
- 3: Outcome_risk always_A            2      tmle 0.1066421  0.04404270
- 4: Outcome_risk always_A            2      tmle 0.1066421  0.05809444
- 5: Outcome_risk always_A            2      tmle 0.1066421  0.06311126
- 6: Outcome_risk always_A            2      tmle 0.1066421  0.06878690
- 7: Outcome_risk always_A            2      tmle 0.1066421  0.07257430
- 8: Outcome_risk always_A            2      tmle 0.1066421  0.07553399
- 9: Outcome_risk always_A            2      tmle 0.1066421  0.07780793
-10: Outcome_risk always_A            2      tmle 0.1066421  0.07965586
-11: Outcome_risk always_A            2      tmle 0.1066421  0.07749240
-12: Outcome_risk always_A            2      tmle 0.1066421  0.07898490
-13: Outcome_risk always_A            2      tmle 0.1066421  0.07422834
-14: Outcome_risk always_A            2      tmle 0.1066421  0.07528568
-15: Outcome_risk always_A            2      tmle 0.1066421  0.07625006
-16: Outcome_risk always_A            2      tmle 0.1066421  0.07685868
-17: Outcome_risk always_A            2      tmle 0.1066421  0.07679610
-18: Outcome_risk always_A            2      tmle 0.1066421  0.07760189
-19: Outcome_risk always_A            2      tmle 0.1066421  0.07808604
-20: Outcome_risk always_A            2      tmle 0.1066421  0.07857188
-21: Outcome_risk always_A            2      tmle 0.1066421  0.07836002
-22: Outcome_risk always_A            2      tmle 0.1066421  0.07908644
-23: Outcome_risk always_A            2      tmle 0.1066421  0.07868808
-24: Outcome_risk always_A            2      tmle 0.1066421  0.07928692
-25: Outcome_risk always_A            2      tmle 0.1066421  0.07962048
-          Target Protocol Time_horizon Estimator  estimate cheap_lower
+          Target Protocol Time_horizon Estimator estimate cheap_lower
+          <char>   <char>       <fctr>    <char>    <num>       <num>
+ 1: Outcome_risk always_A            2      tmle 0.104669  0.05064616
+ 2: Outcome_risk always_A            2      tmle 0.104669  0.08513428
+ 3: Outcome_risk always_A            2      tmle 0.104669  0.09285239
+ 4: Outcome_risk always_A            2      tmle 0.104669  0.08794584
+ 5: Outcome_risk always_A            2      tmle 0.104669  0.07869311
+ 6: Outcome_risk always_A            2      tmle 0.104669  0.08189526
+ 7: Outcome_risk always_A            2      tmle 0.104669  0.08257767
+ 8: Outcome_risk always_A            2      tmle 0.104669  0.08103089
+ 9: Outcome_risk always_A            2      tmle 0.104669  0.08249732
+10: Outcome_risk always_A            2      tmle 0.104669  0.08128813
+11: Outcome_risk always_A            2      tmle 0.104669  0.08263890
+12: Outcome_risk always_A            2      tmle 0.104669  0.07660070
+13: Outcome_risk always_A            2      tmle 0.104669  0.07323761
+14: Outcome_risk always_A            2      tmle 0.104669  0.07435628
+15: Outcome_risk always_A            2      tmle 0.104669  0.07486224
+16: Outcome_risk always_A            2      tmle 0.104669  0.07590451
+17: Outcome_risk always_A            2      tmle 0.104669  0.07455446
+18: Outcome_risk always_A            2      tmle 0.104669  0.07515705
+19: Outcome_risk always_A            2      tmle 0.104669  0.07514378
+20: Outcome_risk always_A            2      tmle 0.104669  0.07515576
+21: Outcome_risk always_A            2      tmle 0.104669  0.07490547
+22: Outcome_risk always_A            2      tmle 0.104669  0.07549025
+23: Outcome_risk always_A            2      tmle 0.104669  0.07598185
+24: Outcome_risk always_A            2      tmle 0.104669  0.07505530
+25: Outcome_risk always_A            2      tmle 0.104669  0.07551222
+          Target Protocol Time_horizon Estimator estimate cheap_lower
     cheap_upper     b
           <num> <int>
- 1:   0.4430180     1
- 2:   0.1906317     2
- 3:   0.1692416     3
- 4:   0.1551898     4
- 5:   0.1501730     5
- 6:   0.1444974     6
- 7:   0.1407100     7
- 8:   0.1377503     8
- 9:   0.1354764     9
-10:   0.1336284    10
-11:   0.1357919    11
-12:   0.1342994    12
-13:   0.1390559    13
-14:   0.1379986    14
-15:   0.1370342    15
-16:   0.1364256    16
-17:   0.1364882    17
-18:   0.1356824    18
-19:   0.1351982    19
-20:   0.1347124    20
-21:   0.1349243    21
-22:   0.1341978    22
-23:   0.1345962    23
-24:   0.1339974    24
-25:   0.1336638    25
+ 1:   0.1586918     1
+ 2:   0.1242037     2
+ 3:   0.1164856     3
+ 4:   0.1213921     4
+ 5:   0.1306449     5
+ 6:   0.1274427     6
+ 7:   0.1267603     7
+ 8:   0.1283071     8
+ 9:   0.1268407     9
+10:   0.1280498    10
+11:   0.1266991    11
+12:   0.1327373    12
+13:   0.1361004    13
+14:   0.1349817    14
+15:   0.1344757    15
+16:   0.1334335    16
+17:   0.1347835    17
+18:   0.1341809    18
+19:   0.1341942    19
+20:   0.1341822    20
+21:   0.1344325    21
+22:   0.1338477    22
+23:   0.1333561    23
+24:   0.1342827    24
+25:   0.1338258    25
     cheap_upper     b
 #+end_src
