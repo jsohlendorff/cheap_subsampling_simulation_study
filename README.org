@@ -1,137 +1,71 @@
 This github repo contains the code used for the simulation study of the cheap subsampling confidence interval.
 To run the simulation study, one needs to use *R* with the ~targets~ package and run ~tar_make()~.
-In addition, one needs the ~rtmle~ and ~CheapSubsampling~ packages which, at the time of writing, are not on CRAN. The necessary packages can be installed as follows:
+The code for the introduction is included in ~intro_cross_validation~ while
+the code for two simulation studies are included in
+~simulation_study_with_cross_validation~ and ~simulation_study_without_cross_validation~.
+In addition, one needs the ~rtmle~ package which, at the time of writing, are not on CRAN. The necessary packages can be installed as follows:
 #+BEGIN_SRC R
 install.packages(c("targets","data.table", "ggplot2", "tarchetypes", "crew", "crew.cluster","devtools", "dplyr", "tidyr", "tibble", "gt", "ggpubr"))
-devtools::install_github("jsohlendorff/CheapSubsampling")
 devtools::install_github("tagteam/rtmle")
 #+END_SRC
 
 An example run for the simulation study can be run by running the following code in R:
 
 #+BEGIN_SRC R :results output org :exports both
-  # Load the necessary packages
-  library(data.table)
-  library(CheapSubsampling)
-  library(rtmle)
+# Load the necessary packages
+library(data.table)
+library(rtmle)
 
-  # Arguments
-  time_horizon <- 2
-  eta <- 0.632
-  sample_size <- 1000
+## Working directory
+setwd(
+  "~/phd/cheap_subsampling_simulation_study_repo/simulation_study_without_cross_validation/"
+)
 
-  # Load functions from simulation study
-  source("functions/rtmle_functions.R")
-  source("functions/simulation_functions.R")
+# Arguments
+time_horizon <- 2
+eta <- 0.632
+sample_size <- 1000
 
-  # Generate some data
-  simulated_data <- simulate_data(n = sample_size, time_horizon = time_horizon)
+# Load functions from simulation study
+source("functions/rtmle_functions.R")
+source("functions/simulation_functions.R")
 
-  # RTMLE initialization
-  x <- rtmle_init(
-    intervals = time_horizon,
-    name_id = "pnr",
-    name_outcome = "Y",
-    name_competing = NULL,
-    name_censoring = "C",
-    censored_levels = c(1, 0),
-    censored_label = 0
-  )
-  # Add data
-  add_baseline_data(x) <- simulated_data$baseline_data
-  x$data$outcome_data <- simulated_data$outcome
-  x$data$timevar_data <- simulated_data$timevarying_covariates
-  x$data$timevar_data <- x$data$timevar_data[simulated_data$regimen, on = "pnr"]
-  # Specify the treatment protocol
-  protocol(x) <- list(
-    name = "always_A",
-    treatment_variables = "A",
-    intervention = 1
-  )
-  prepare_data(x) <- list()
-  # Specify the target parameter
-  target(x) <- list(
-    name = "Outcome_risk",
-    strategy = "additive",
-    estimator = "tmle",
-    protocols = "always_A",
-    markov = NULL
-  )
-  rtmle_arguments <- list(refit = TRUE, learner = "learn_glm", time_horizon = time_horizon)
+# Generate some data
+simulated_data <- simulate_data(n = sample_size, time_horizon = time_horizon)
 
-  set.seed(123)
-  cheap_bootstrap_rtmle(
-    x = x,
-    cheap_bootstrap_arguments = list(
-      b = 25,
-      size = round(eta * sample_size),
-      parallelize = FALSE,
-      cores = 1,
-      type = "subsampling"
-    ),
-    rtmle_arguments = rtmle_arguments,
-    id_name = "pnr"
-  )
+# RTMLE initialization
+x <- rtmle_init(
+  intervals = time_horizon,
+  name_id = "pnr",
+  name_outcome = "Y",
+  name_competing = NULL,
+  name_censoring = "C",
+  censored_levels = c(1, 0),
+  censored_label = 0
+)
+
+# Add data
+x <- add_baseline_data(x, data = simulated_data$baseline_data)
+x$data$outcome_data <- simulated_data$outcome
+x$data$timevar_data <- simulated_data$timevarying_covariates
+x$data$timevar_data <- x$data$timevar_data[simulated_data$regimen, on = "pnr"]
+x <- protocol(x, name = "Always_A", intervention = data.frame("A" = factor("1", levels = c("0", "1"))))
+x <- prepare_data(x)
+
+# Specify the target parameter
+x <- target(
+  x,
+  name = "Outcome_risk",
+  strategy = "additive",
+  estimator = "tmle",
+  protocols = "Always_A"
+)
+x <- model_formula(x)
+x <- run_rtmle(x, learner = "learn_glm", time_horizon = 1:time_horizon)
+x <- cheap_bootstrap(
+  x,
+  B = 5,
+  time_horizon = 1:time_horizon,
+  M = 0.632 * NROW(x$prepared_data)
+)
 #+END_SRC
-
-#+RESULTS:
-#+begin_src org
-Cheap subsampling results for subsample size m = 632 and 25 bootstrap samples
-Key: <Target, Protocol, Time_horizon, Estimator>
-          Target Protocol Time_horizon Estimator  estimate cheap_lower
-          <char>   <char>       <fctr>    <char>     <num>       <num>
- 1: Outcome_risk always_A            2      tmle 0.1199594  0.04510490
- 2: Outcome_risk always_A            2      tmle 0.1199594  0.07321657
- 3: Outcome_risk always_A            2      tmle 0.1199594  0.07168511
- 4: Outcome_risk always_A            2      tmle 0.1199594  0.07851400
- 5: Outcome_risk always_A            2      tmle 0.1199594  0.08537849
- 6: Outcome_risk always_A            2      tmle 0.1199594  0.08912034
- 7: Outcome_risk always_A            2      tmle 0.1199594  0.08887440
- 8: Outcome_risk always_A            2      tmle 0.1199594  0.08418118
- 9: Outcome_risk always_A            2      tmle 0.1199594  0.08394048
-10: Outcome_risk always_A            2      tmle 0.1199594  0.08489046
-11: Outcome_risk always_A            2      tmle 0.1199594  0.07995597
-12: Outcome_risk always_A            2      tmle 0.1199594  0.08102777
-13: Outcome_risk always_A            2      tmle 0.1199594  0.07951754
-14: Outcome_risk always_A            2      tmle 0.1199594  0.08022880
-15: Outcome_risk always_A            2      tmle 0.1199594  0.08125742
-16: Outcome_risk always_A            2      tmle 0.1199594  0.08216463
-17: Outcome_risk always_A            2      tmle 0.1199594  0.08313226
-18: Outcome_risk always_A            2      tmle 0.1199594  0.08172181
-19: Outcome_risk always_A            2      tmle 0.1199594  0.08152945
-20: Outcome_risk always_A            2      tmle 0.1199594  0.08255710
-21: Outcome_risk always_A            2      tmle 0.1199594  0.08285387
-22: Outcome_risk always_A            2      tmle 0.1199594  0.08065354
-23: Outcome_risk always_A            2      tmle 0.1199594  0.08133186
-24: Outcome_risk always_A            2      tmle 0.1199594  0.08223024
-25: Outcome_risk always_A            2      tmle 0.1199594  0.08295302
-          Target Protocol Time_horizon Estimator  estimate cheap_lower
-    cheap_upper     b
-          <num> <int>
- 1:   0.1948140     1
- 2:   0.1667023     2
- 3:   0.1682338     3
- 4:   0.1614049     4
- 5:   0.1545404     5
- 6:   0.1507985     6
- 7:   0.1510445     7
- 8:   0.1557377     8
- 9:   0.1559784     9
-10:   0.1550284    10
-11:   0.1599629    11
-12:   0.1588911    12
-13:   0.1604013    13
-14:   0.1596901    14
-15:   0.1586614    15
-16:   0.1577542    16
-17:   0.1567866    17
-18:   0.1581971    18
-19:   0.1583894    19
-20:   0.1573618    20
-21:   0.1570650    21
-22:   0.1592653    22
-23:   0.1585870    23
-24:   0.1576886    24
-25:   0.1569658    25
-    cheap_upper     b
-#+end_src

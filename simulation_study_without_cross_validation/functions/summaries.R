@@ -36,48 +36,6 @@ prepare_summary <- function(res, true_value) {
   )
 }
 
-plot_subsample_size <- function(summary_results,
-                                cbbPalette = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#D55E00", "#0072B2", "#CC79A7", "#F0E442"), # color scheme for ggplot in summary_plots
-                                ln_width = 1.3, # line width for ggplot in summary_plots
-                                b_subset = c(5, 20, 100, 500), # which bootstrap samples to plot
-                                fix_sample_size = 8000) { ## fix the sample size 
-  res_cov <- summary_results$res_cov
-  res_width <- summary_results$res_width
-
-  ## Options for plots
-  theme_set(theme_bw())
-  update_geom_defaults("line", aes(linewidth = ln_width))
-
-  ## coverage plot; m variable
-  cov_subsample_size <- res_cov[type_confidence_interval == "cheap_subsampling" & B %in% b_subset & sample_size == fix_sample_size]
-  cov_subsample_size$B <- as.factor(cov_subsample_size$B)
-  cov_plot_subsample_size <- ggplot(cov_subsample_size, aes(x = eta, y = coverage, color = B)) +
-    geom_line() +
-    geom_hline(yintercept = 0.95, linetype = "dashed", linewidth = ln_width) +
-    ylab("Coverage of the CS confidence interval") +
-    xlab(TeX("$\\eta$")) +
-    scale_y_continuous(labels = scales::percent, limits =  c(0.9, 1)) +
-    scale_color_manual(name = "Number of bootstrap samples (B)", values = cbbPalette)
-
-  res_width <- res_width[B %in% b_subset]
-  res_width$B <- as.factor(res_width$B)
-  width_plot_subsample_size <- ggplot(res_width[type_confidence_interval == "cheap_subsampling" & sample_size == fix_sample_size], aes(x = eta, y = rel_width, color = B)) +
-    geom_line() +
-    scale_y_continuous(labels = scales::percent) +
-    ylab("Average relative width of the confidence interval") +
-    xlab(TeX("$\\eta$")) + 
-    scale_color_manual(name = "Number of bootstrap samples (B)", values = cbbPalette)
-
-  ## Combine plots into one
-  ggarrange(
-    cov_plot_subsample_size,
-    width_plot_subsample_size,
-    ncol = 2,
-    common.legend = TRUE,
-    legend = "top"
-  )
-}
-
 plot_bootstrap <- function(summary_results,
                            cbbPalette = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#D55E00", "#0072B2", "#CC79A7", "#F0E442"), # color scheme for ggplot in summary_plots
                            ln_width = 1.3, # line width for ggplot in summary_plots
@@ -101,13 +59,13 @@ plot_bootstrap <- function(summary_results,
 
   ## remove the "Standard error based \non non-parametric \nbootstrap samples" from the plot
   cov_bootstrap <- cov_bootstrap[type_confidence_interval != "Standard error based \non non-parametric \nbootstrap samples"]
-  
+
   ggplot(cov_bootstrap, aes(x = B, y = coverage, color = type_confidence_interval)) +
     geom_line() +
     geom_hline(yintercept = 0.95, linetype = "dashed", linewidth = ln_width) +
     ylab("Coverage") +
     xlab("Number of bootstrap samples (B)") +
     scale_color_manual(name = "Confidence interval \nmethod", values = cbbPalette) +
-    scale_y_continuous(labels = scales::percent, limits = c(0.935, 0.965)) + 
+    scale_y_continuous(labels = scales::percent, limits = c(0.935, 0.965)) +
     theme_bw()
 }

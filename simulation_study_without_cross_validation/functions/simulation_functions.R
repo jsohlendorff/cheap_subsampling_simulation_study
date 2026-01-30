@@ -99,16 +99,6 @@ run_simulation <- function(b_max = 10,
                            time_horizon = 2,
                            type = "subsampling", ## "subsampling" or "non_parametric"
                            sample_size) {
-  if (FALSE) {
-    ## For debugging
-    b_max <- 2
-    eta <- 0.5
-    time_horizon <- 2
-    type <- "cheap_bootstrap"
-    sample_size <- 8000
-    library(data.table)
-    library(rtmle)
-  }
   simulated_data <- simulate_data(sample_size, time_horizon, intervene = NULL)
 
   ## RTMLE initialization
@@ -121,24 +111,25 @@ run_simulation <- function(b_max = 10,
     censored_levels = c(1, 0),
     censored_label = 0
   )
-  add_baseline_data(x) <- simulated_data$baseline_data
+  
+  # Add data
+  x <- add_baseline_data(x, data = simulated_data$baseline_data)
   x$data$outcome_data <- simulated_data$outcome
   x$data$timevar_data <- simulated_data$timevarying_covariates
   x$data$timevar_data <- x$data$timevar_data[simulated_data$regimen, on = "pnr"]
-  protocol(x) <- list(
-    name = "always_A",
-    treatment_variables = "A",
-    intervention = 1
-  )
-  prepare_data(x) <- list()
-  target(x) <- list(
+  x <- protocol(x, name = "Always_A", intervention = data.frame("A" = factor("1", levels = c("0", "1"))))
+  x <- prepare_data(x)
+  
+  # Specify the target parameter
+  x <- target(
+    x,
     name = "Outcome_risk",
     strategy = "additive",
     estimator = "tmle",
-    protocols = "always_A",
-    markov = NULL
+    protocols = "Always_A"
   )
-  rtmle_arguments <- list(refit = TRUE, learner = "learn_glm", time_horizon = time_horizon, selector = "lambda.min")
+  x <- model_formula(x)
+  rtmle_arguments <- list(learner = "learn_glm", time_horizon = time_horizon)
 
   res_cheap_bootstrap <- cheap_bootstrap_rtmle(
     x = x,
